@@ -1,68 +1,60 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.util.Scanner;
+import java.util.Stack;
 
-public class PalindromeCheckerApp extends JFrame implements ActionListener {
+/**
+ * UC: Encapsulation Based Palindrome Validation
+ *
+ * Goal:
+ * Encapsulate palindrome logic inside separate class.
+ */
 
-    private JTextField inputField;
-    private JButton checkButton;
-    private JButton clearButton;
-    private JLabel resultLabel;
-
-    public PalindromeCheckerApp() {
-        setTitle("Palindrome Checker App");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
-
-        inputField = new JTextField(20);
-        checkButton = new JButton("Check");
-        clearButton = new JButton("Clear");
-        resultLabel = new JLabel("Enter text and click Check");
-
-        add(new JLabel("Enter Text:"));
-        add(inputField);
-        add(checkButton);
-        add(clearButton);
-        add(resultLabel);
-
-        checkButton.addActionListener(this);
-        clearButton.addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == checkButton) {
-
-            String text = inputField.getText();
-
-            if (text.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Please enter some text!",
-                        "Input Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            String reversed = new StringBuilder(text).reverse().toString();
-
-            if (text.equals(reversed)) {
-                resultLabel.setText("It is a Palindrome ✅");
-            } else {
-                resultLabel.setText("Not a Palindrome ❌");
-            }
-        }
-
-        if (e.getSource() == clearButton) {
-            inputField.setText("");
-            resultLabel.setText("Enter text and click Check");
-        }
-    }
+// Main class (Handles input/output only)
+public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
-        new PalindromeCheckerApp().setVisible(true);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Palindrome Checker - OOP Version =====");
+        System.out.print("Enter a string: ");
+
+        String input = scanner.nextLine();
+
+        PalindromeChecker checker = new PalindromeChecker();
+
+        boolean result = checker.checkPalindrome(input);
+
+        if (result) {
+            System.out.println("It is a Palindrome");
+        } else {
+            System.out.println("Not a Palindrome");
+        }
+
+        scanner.close();
+    }
+}
+
+// Separate class for logic (Encapsulation)
+class PalindromeChecker {
+
+    public boolean checkPalindrome(String input) {
+
+        input = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        Stack<Character> stack = new Stack<>();
+
+        // Push characters
+        for (int i = 0; i < input.length(); i++) {
+            stack.push(input.charAt(i));
+        }
+
+        // Compare with pop
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) != stack.pop()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
