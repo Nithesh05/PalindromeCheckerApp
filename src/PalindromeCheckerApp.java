@@ -1,68 +1,50 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.util.Scanner;
 
-public class PalindromeCheckerApp extends JFrame implements ActionListener {
+/**
+ * UC: Recursion Based Palindrome Check
+ *
+ * Goal:
+ * Use recursive function to compare
+ * start and end characters.
+ */
 
-    private JTextField inputField;
-    private JButton checkButton;
-    private JButton clearButton;
-    private JLabel resultLabel;
+public class PalindromeCheckerApp {
 
-    public PalindromeCheckerApp() {
-        setTitle("Palindrome Checker App");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
+    // Recursive method
+    public static boolean isPalindrome(String str, int start, int end) {
 
-        inputField = new JTextField(20);
-        checkButton = new JButton("Check");
-        clearButton = new JButton("Clear");
-        resultLabel = new JLabel("Enter text and click Check");
-
-        add(new JLabel("Enter Text:"));
-        add(inputField);
-        add(checkButton);
-        add(clearButton);
-        add(resultLabel);
-
-        checkButton.addActionListener(this);
-        clearButton.addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == checkButton) {
-
-            String text = inputField.getText();
-
-            if (text.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Please enter some text!",
-                        "Input Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            String reversed = new StringBuilder(text).reverse().toString();
-
-            if (text.equals(reversed)) {
-                resultLabel.setText("It is a Palindrome ✅");
-            } else {
-                resultLabel.setText("Not a Palindrome ❌");
-            }
+        // Base condition
+        if (start >= end) {
+            return true;
         }
 
-        if (e.getSource() == clearButton) {
-            inputField.setText("");
-            resultLabel.setText("Enter text and click Check");
+        // If characters do not match
+        if (str.charAt(start) != str.charAt(end)) {
+            return false;
         }
+
+        // Recursive call
+        return isPalindrome(str, start + 1, end - 1);
     }
 
     public static void main(String[] args) {
-        new PalindromeCheckerApp().setVisible(true);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Palindrome Checker - Recursion Based =====");
+        System.out.print("Enter a string: ");
+
+        String input = scanner.nextLine();
+        input = input.replaceAll("\\s+", "").toLowerCase();
+
+        boolean result = isPalindrome(input, 0, input.length() - 1);
+
+        if (result) {
+            System.out.println("It is a Palindrome");
+        } else {
+            System.out.println("Not a Palindrome");
+        }
+
+        scanner.close();
     }
 }
