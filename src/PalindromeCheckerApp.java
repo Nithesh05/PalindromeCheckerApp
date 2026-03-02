@@ -1,68 +1,96 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.util.*;
 
-public class PalindromeCheckerApp extends JFrame implements ActionListener {
+/**
+ * UC: Strategy Pattern - Dynamic Palindrome Algorithm Selection
+ *
+ * Goal:
+ * Choose palindrome algorithm dynamically at runtime.
+ */
 
-    private JTextField inputField;
-    private JButton checkButton;
-    private JButton clearButton;
-    private JLabel resultLabel;
+// Strategy Interface
+interface PalindromeStrategy {
+    boolean check(String input);
+}
 
-    public PalindromeCheckerApp() {
-        setTitle("Palindrome Checker App");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
+// Stack Implementation
+class StackStrategy implements PalindromeStrategy {
 
-        inputField = new JTextField(20);
-        checkButton = new JButton("Check");
-        clearButton = new JButton("Clear");
-        resultLabel = new JLabel("Enter text and click Check");
+    public boolean check(String input) {
 
-        add(new JLabel("Enter Text:"));
-        add(inputField);
-        add(checkButton);
-        add(clearButton);
-        add(resultLabel);
+        input = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        Stack<Character> stack = new Stack<>();
 
-        checkButton.addActionListener(this);
-        clearButton.addActionListener(this);
-    }
+        for (char ch : input.toCharArray()) {
+            stack.push(ch);
+        }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == checkButton) {
-
-            String text = inputField.getText();
-
-            if (text.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Please enter some text!",
-                        "Input Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            String reversed = new StringBuilder(text).reverse().toString();
-
-            if (text.equals(reversed)) {
-                resultLabel.setText("It is a Palindrome ✅");
-            } else {
-                resultLabel.setText("Not a Palindrome ❌");
+        for (char ch : input.toCharArray()) {
+            if (ch != stack.pop()) {
+                return false;
             }
         }
 
-        if (e.getSource() == clearButton) {
-            inputField.setText("");
-            resultLabel.setText("Enter text and click Check");
-        }
+        return true;
     }
+}
+
+// Deque Implementation
+class DequeStrategy implements PalindromeStrategy {
+
+    public boolean check(String input) {
+
+        input = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        Deque<Character> deque = new LinkedList<>();
+
+        for (char ch : input.toCharArray()) {
+            deque.addLast(ch);
+        }
+
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+// Main Application Class
+public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
-        new PalindromeCheckerApp().setVisible(true);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Palindrome Checker - Strategy Pattern =====");
+        System.out.println("Choose Algorithm:");
+        System.out.println("1. Stack Strategy");
+        System.out.println("2. Deque Strategy");
+        System.out.print("Enter choice (1 or 2): ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.print("Enter a string: ");
+        String input = scanner.nextLine();
+
+        PalindromeStrategy strategy;
+
+        if (choice == 1) {
+            strategy = new StackStrategy();
+        } else {
+            strategy = new DequeStrategy();
+        }
+
+        boolean result = strategy.check(input);
+
+        if (result) {
+            System.out.println("It is a Palindrome");
+        } else {
+            System.out.println("Not a Palindrome");
+        }
+
+        scanner.close();
     }
 }
