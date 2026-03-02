@@ -1,68 +1,95 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.util.*;
 
-public class PalindromeCheckerApp extends JFrame implements ActionListener {
+/**
+ * UC: Performance Comparison of Palindrome Algorithms
+ *
+ * Goal:
+ * Compare execution time of different approaches.
+ */
 
-    private JTextField inputField;
-    private JButton checkButton;
-    private JButton clearButton;
-    private JLabel resultLabel;
+public class PalindromeCheckerApp {
 
-    public PalindromeCheckerApp() {
-        setTitle("Palindrome Checker App");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
+    // Stack Based Method
+    public static boolean stackMethod(String input) {
 
-        inputField = new JTextField(20);
-        checkButton = new JButton("Check");
-        clearButton = new JButton("Clear");
-        resultLabel = new JLabel("Enter text and click Check");
+        Stack<Character> stack = new Stack<>();
+        for (char ch : input.toCharArray()) {
+            stack.push(ch);
+        }
 
-        add(new JLabel("Enter Text:"));
-        add(inputField);
-        add(checkButton);
-        add(clearButton);
-        add(resultLabel);
-
-        checkButton.addActionListener(this);
-        clearButton.addActionListener(this);
+        for (char ch : input.toCharArray()) {
+            if (ch != stack.pop()) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    // Deque Based Method
+    public static boolean dequeMethod(String input) {
 
-        if (e.getSource() == checkButton) {
-
-            String text = inputField.getText();
-
-            if (text.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Please enter some text!",
-                        "Input Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            String reversed = new StringBuilder(text).reverse().toString();
-
-            if (text.equals(reversed)) {
-                resultLabel.setText("It is a Palindrome ✅");
-            } else {
-                resultLabel.setText("Not a Palindrome ❌");
-            }
+        Deque<Character> deque = new LinkedList<>();
+        for (char ch : input.toCharArray()) {
+            deque.addLast(ch);
         }
 
-        if (e.getSource() == clearButton) {
-            inputField.setText("");
-            resultLabel.setText("Enter text and click Check");
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) {
+                return false;
+            }
         }
+        return true;
+    }
+
+    // Two Pointer Method
+    public static boolean twoPointerMethod(String input) {
+
+        int start = 0;
+        int end = input.length() - 1;
+
+        while (start < end) {
+            if (input.charAt(start) != input.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
     }
 
     public static void main(String[] args) {
-        new PalindromeCheckerApp().setVisible(true);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Palindrome Performance Comparison =====");
+        System.out.print("Enter a string: ");
+
+        String input = scanner.nextLine();
+        input = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        // Stack Timing
+        long startTime = System.nanoTime();
+        boolean stackResult = stackMethod(input);
+        long endTime = System.nanoTime();
+        long stackTime = endTime - startTime;
+
+        // Deque Timing
+        startTime = System.nanoTime();
+        boolean dequeResult = dequeMethod(input);
+        endTime = System.nanoTime();
+        long dequeTime = endTime - startTime;
+
+        // Two Pointer Timing
+        startTime = System.nanoTime();
+        boolean pointerResult = twoPointerMethod(input);
+        endTime = System.nanoTime();
+        long pointerTime = endTime - startTime;
+
+        System.out.println("\nResults:");
+        System.out.println("Stack Method: " + stackResult + " | Time: " + stackTime + " ns");
+        System.out.println("Deque Method: " + dequeResult + " | Time: " + dequeTime + " ns");
+        System.out.println("Two Pointer Method: " + pointerResult + " | Time: " + pointerTime + " ns");
+
+        scanner.close();
     }
 }
