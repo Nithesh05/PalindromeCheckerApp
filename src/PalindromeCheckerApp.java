@@ -1,14 +1,12 @@
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
-import java.util.Stack;
 
 /**
- * UC: Demonstrate FIFO vs LIFO using Queue and Stack
+ * UC: Deque Based Palindrome Validation
  *
  * Goal:
- * Compare dequeue (FIFO) and pop (LIFO)
- * to validate palindrome logic.
+ * Use Deque to compare front and rear elements.
  */
 
 public class PalindromeCheckerApp {
@@ -16,29 +14,25 @@ public class PalindromeCheckerApp {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        Deque<Character> deque = new LinkedList<>();
 
-        Queue<Character> queue = new LinkedList<>();
-        Stack<Character> stack = new Stack<>();
-
-        System.out.println("===== Palindrome Checker - FIFO vs LIFO =====");
+        System.out.println("===== Palindrome Checker - Deque Based =====");
         System.out.print("Enter a string: ");
 
         String input = scanner.nextLine();
 
         input = input.replaceAll("\\s+", "").toLowerCase();
 
-        // Enqueue and Push characters
+        // Insert characters into deque
         for (int i = 0; i < input.length(); i++) {
-            char ch = input.charAt(i);
-            queue.add(ch);   // FIFO
-            stack.push(ch);  // LIFO
+            deque.addLast(input.charAt(i));
         }
 
         boolean isPalindrome = true;
 
-        // Compare dequeue vs pop
-        while (!queue.isEmpty()) {
-            if (queue.remove() != stack.pop()) {
+        // Compare front and rear
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) {
                 isPalindrome = false;
                 break;
             }
