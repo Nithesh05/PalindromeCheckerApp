@@ -1,8 +1,11 @@
 import java.util.Scanner;
+import java.util.Stack;
 
 /**
- * UC4: Character Array Based Palindrome Check
- * Same class file – Console version
+ * UC: Stack Based Palindrome Validation
+ *
+ * Goal:
+ * Use Stack (LIFO) to reverse characters and validate palindrome.
  */
 
 public class PalindromeCheckerApp {
@@ -10,28 +13,29 @@ public class PalindromeCheckerApp {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        Stack<Character> stack = new Stack<>();
 
-        System.out.println("===== Palindrome Checker - UC4 =====");
+        System.out.println("===== Palindrome Checker - Stack Based =====");
         System.out.print("Enter a string: ");
 
         String input = scanner.nextLine();
 
+        // Remove spaces and convert to lowercase
         input = input.replaceAll("\\s+", "").toLowerCase();
 
-        char[] characters = input.toCharArray();
-
-        int start = 0;
-        int end = characters.length - 1;
+        // Push characters into stack
+        for (int i = 0; i < input.length(); i++) {
+            stack.push(input.charAt(i));
+        }
 
         boolean isPalindrome = true;
 
-        while (start < end) {
-            if (characters[start] != characters[end]) {
+        // Pop and compare
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) != stack.pop()) {
                 isPalindrome = false;
                 break;
             }
-            start++;
-            end--;
         }
 
         if (isPalindrome) {
