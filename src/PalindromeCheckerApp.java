@@ -1,68 +1,92 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.util.Scanner;
 
-public class PalindromeCheckerApp extends JFrame implements ActionListener {
+/**
+ * UC: Singly Linked List Based Palindrome Check
+ *
+ * Goal:
+ * Convert string to linked list
+ * Reverse second half
+ * Compare both halves
+ */
 
-    private JTextField inputField;
-    private JButton checkButton;
-    private JButton clearButton;
-    private JLabel resultLabel;
+public class PalindromeCheckerApp {
 
-    public PalindromeCheckerApp() {
-        setTitle("Palindrome Checker App");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
+    // Node definition
+    static class Node {
+        char data;
+        Node next;
 
-        inputField = new JTextField(20);
-        checkButton = new JButton("Check");
-        clearButton = new JButton("Clear");
-        resultLabel = new JLabel("Enter text and click Check");
-
-        add(new JLabel("Enter Text:"));
-        add(inputField);
-        add(checkButton);
-        add(clearButton);
-        add(resultLabel);
-
-        checkButton.addActionListener(this);
-        clearButton.addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == checkButton) {
-
-            String text = inputField.getText();
-
-            if (text.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Please enter some text!",
-                        "Input Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-            String reversed = new StringBuilder(text).reverse().toString();
-
-            if (text.equals(reversed)) {
-                resultLabel.setText("It is a Palindrome ✅");
-            } else {
-                resultLabel.setText("Not a Palindrome ❌");
-            }
-        }
-
-        if (e.getSource() == clearButton) {
-            inputField.setText("");
-            resultLabel.setText("Enter text and click Check");
+        Node(char data) {
+            this.data = data;
+            this.next = null;
         }
     }
 
     public static void main(String[] args) {
-        new PalindromeCheckerApp().setVisible(true);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===== Palindrome Checker - Linked List Based =====");
+        System.out.print("Enter a string: ");
+
+        String input = scanner.nextLine();
+        input = input.replaceAll("\\s+", "").toLowerCase();
+
+        if (input.length() == 0) {
+            System.out.println("Empty input.");
+            return;
+        }
+
+        // Convert string to linked list
+        Node head = new Node(input.charAt(0));
+        Node current = head;
+
+        for (int i = 1; i < input.length(); i++) {
+            current.next = new Node(input.charAt(i));
+            current = current.next;
+        }
+
+        // Use fast and slow pointer to find middle
+        Node slow = head;
+        Node fast = head;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node prev = null;
+        Node temp = slow;
+
+        while (temp != null) {
+            Node nextNode = temp.next;
+            temp.next = prev;
+            prev = temp;
+            temp = nextNode;
+        }
+
+        // Compare first half and reversed second half
+        Node firstHalf = head;
+        Node secondHalf = prev;
+
+        boolean isPalindrome = true;
+
+        while (secondHalf != null) {
+            if (firstHalf.data != secondHalf.data) {
+                isPalindrome = false;
+                break;
+            }
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
+        }
+
+        if (isPalindrome) {
+            System.out.println("It is a Palindrome");
+        } else {
+            System.out.println("Not a Palindrome");
+        }
+
+        scanner.close();
     }
 }
