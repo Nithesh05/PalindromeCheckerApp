@@ -1,11 +1,14 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 
 /**
- * UC: Stack Based Palindrome Validation
+ * UC: Demonstrate FIFO vs LIFO using Queue and Stack
  *
  * Goal:
- * Use Stack (LIFO) to reverse characters and validate palindrome.
+ * Compare dequeue (FIFO) and pop (LIFO)
+ * to validate palindrome logic.
  */
 
 public class PalindromeCheckerApp {
@@ -13,26 +16,29 @@ public class PalindromeCheckerApp {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+
+        Queue<Character> queue = new LinkedList<>();
         Stack<Character> stack = new Stack<>();
 
-        System.out.println("===== Palindrome Checker - Stack Based =====");
+        System.out.println("===== Palindrome Checker - FIFO vs LIFO =====");
         System.out.print("Enter a string: ");
 
         String input = scanner.nextLine();
 
-        // Remove spaces and convert to lowercase
         input = input.replaceAll("\\s+", "").toLowerCase();
 
-        // Push characters into stack
+        // Enqueue and Push characters
         for (int i = 0; i < input.length(); i++) {
-            stack.push(input.charAt(i));
+            char ch = input.charAt(i);
+            queue.add(ch);   // FIFO
+            stack.push(ch);  // LIFO
         }
 
         boolean isPalindrome = true;
 
-        // Pop and compare
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) != stack.pop()) {
+        // Compare dequeue vs pop
+        while (!queue.isEmpty()) {
+            if (queue.remove() != stack.pop()) {
                 isPalindrome = false;
                 break;
             }
