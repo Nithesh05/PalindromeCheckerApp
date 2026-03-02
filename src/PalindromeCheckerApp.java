@@ -37,8 +37,8 @@ public class PalindromeCheckerApp extends JFrame implements ActionListener {
 
         String text = inputField.getText();
 
-        // Remove spaces and convert to lowercase
-        text = text.replaceAll("\\s+", "").toLowerCase();
+// Remove all non-alphanumeric characters
+        text = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
         String reversed = new StringBuilder(text).reverse().toString();
 
